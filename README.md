@@ -1,4 +1,5 @@
 # go-socks
+[![CI](https://github.com/nwtgck/go-socks/actions/workflows/ci.yml/badge.svg)](https://github.com/nwtgck/go-socks/actions/workflows/ci.yml)
 
 SOCKS4 and SOCKS5 proxy server in Go
 
