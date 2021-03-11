@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func handleSocks4(conn net.Conn) error {
+func (s *Server) handleSocks4(conn net.Conn) error {
 	cddstportdstip := make([]byte, 1+2+4)
 	if _, err := io.ReadFull(conn, cddstportdstip); err != nil {
 		return err
