@@ -3,11 +3,15 @@ package socks
 import (
 	"encoding/binary"
 	"fmt"
+	"golang.org/x/net/context"
 	"io"
 	"net"
+	"strconv"
 )
 
 func (s *Server) handleSocks4(conn net.Conn) error {
+	ctx := context.Background()
+
 	cddstportdstip := make([]byte, 1+2+4)
 	if _, err := io.ReadFull(conn, cddstportdstip); err != nil {
 		return err
@@ -19,19 +23,27 @@ func (s *Server) handleSocks4(conn net.Conn) error {
 		return fmt.Errorf("command %d is not supported", command)
 	}
 	// Skip USERID
-	b := make([]byte, 1)
-	for {
-		if _, err := io.ReadFull(conn, b); err != nil {
+	if _, err := readAsString(conn); err != nil {
+		return err
+	}
+	// SOCKS4a
+	if dstIp[0] == 0 && dstIp[1] == 0 && dstIp[2] == 0 && dstIp[3] != 0 {
+		dstHost, err := readAsString(conn)
+		_, dstIp, err = s.config.Resolver.Resolve(ctx, dstHost)
+		if err != nil {
 			return err
-		}
-		if b[0] == 0 {
-			break
 		}
 	}
 	if _, err := conn.Write([]byte{0, 90, 0, 0, 0, 0, 0, 0}); err != nil {
 		return err
 	}
-	dstConn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", dstIp, dstPort))
+	dial := s.config.Dial
+	if dial == nil {
+		dial = func(ctx context.Context, net_, addr string) (net.Conn, error) {
+			return net.Dial(net_, addr)
+		}
+	}
+	dstConn, err := dial(ctx, "tcp", net.JoinHostPort(dstIp.String(), strconv.Itoa(int(dstPort))))
 	if err != nil {
 		return err
 	}
@@ -49,4 +61,19 @@ func (s *Server) handleSocks4(conn net.Conn) error {
 		return err
 	}
 	return <-errCh
+}
+
+func readAsString(r io.Reader) (string, error) {
+	var bs []byte
+	b := make([]byte, 1)
+	for {
+		if _, err := io.ReadFull(r, b); err != nil {
+			return "", err
+		}
+		bs = append(bs, b[0])
+		if b[0] == 0 {
+			break
+		}
+	}
+	return string(bs), nil
 }
