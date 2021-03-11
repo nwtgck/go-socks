@@ -11,7 +11,7 @@ func (s *Server) handleSocks5(conn net.Conn) error {
 	// Authenticate the connection
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {
-		err = fmt.Errorf("Failed to authenticate: %v", err)
+		err = fmt.Errorf("failed to authenticate: %v", err)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 	}
@@ -23,7 +23,7 @@ func (s *Server) handleSocks5(conn net.Conn) error {
 				return fmt.Errorf("Failed to send reply: %v", err)
 			}
 		}
-		return fmt.Errorf("Failed to read destination address: %v", err)
+		return fmt.Errorf("failed to read destination address: %v", err)
 	}
 	request.AuthContext = authContext
 	if client, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
@@ -32,7 +32,7 @@ func (s *Server) handleSocks5(conn net.Conn) error {
 
 	// Process the client request
 	if err := s.handleRequest(request, conn); err != nil {
-		err = fmt.Errorf("Failed to handle request: %v", err)
+		err = fmt.Errorf("failed to handle request: %v", err)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 	}
