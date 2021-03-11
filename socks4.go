@@ -1,6 +1,7 @@
 package socks
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"golang.org/x/net/context"
@@ -63,16 +64,16 @@ func (s *Server) handleSocks4(conn net.Conn) error {
 }
 
 func readAsString(r io.Reader) (string, error) {
-	var bs []byte
+	var buff bytes.Buffer
 	var b [1]byte
 	for {
 		if _, err := io.ReadFull(r, b[:]); err != nil {
 			return "", err
 		}
-		bs = append(bs, b[0])
 		if b[0] == 0 {
 			break
 		}
+		buff.Write(b[:])
 	}
-	return string(bs), nil
+	return buff.String(), nil
 }
