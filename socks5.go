@@ -1,8 +1,9 @@
-package socks5
+package socks
 
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -11,7 +12,8 @@ import (
 )
 
 const (
-	socks5Version = uint8(5)
+	socks4Version uint8 = 4
+	socks5Version       = 5
 )
 
 // Config is used to setup and configure a Server
@@ -120,15 +122,17 @@ func (s *Server) Serve(l net.Listener) error {
 // ServeConn is used to serve a single connection.
 func (s *Server) ServeConn(conn net.Conn) error {
 	defer conn.Close()
-	bufConn := bufio.NewReader(conn)
-
 	// Read the version byte
-	version := []byte{0}
-	if _, err := bufConn.Read(version); err != nil {
+	version := make([]byte, 1)
+
+	if _, err := io.ReadFull(conn, version); err != nil {
 		s.config.Logger.Printf("[ERR] socks: Failed to get version byte: %v", err)
 		return err
 	}
 
+	if version[0] == socks4Version {
+		return handleSocks4(conn)
+	}
 	// Ensure we are compatible
 	if version[0] != socks5Version {
 		err := fmt.Errorf("Unsupported SOCKS version: %v", version)
@@ -136,6 +140,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 		return err
 	}
 
+	bufConn := bufio.NewReader(conn)
 	// Authenticate the connection
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {

@@ -1,4 +1,4 @@
-package socks5
+package socks
 
 import (
 	"golang.org/x/net/context"
