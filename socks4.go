@@ -11,9 +11,8 @@ import (
 
 func (s *Server) handleSocks4(conn net.Conn) error {
 	ctx := context.Background()
-
-	cddstportdstip := make([]byte, 1+2+4)
-	if _, err := io.ReadFull(conn, cddstportdstip); err != nil {
+	var cddstportdstip [1 + 2 + 4]byte
+	if _, err := io.ReadFull(conn, cddstportdstip[:]); err != nil {
 		return err
 	}
 	command := cddstportdstip[0]
@@ -65,9 +64,9 @@ func (s *Server) handleSocks4(conn net.Conn) error {
 
 func readAsString(r io.Reader) (string, error) {
 	var bs []byte
-	b := make([]byte, 1)
+	var b [1]byte
 	for {
-		if _, err := io.ReadFull(r, b); err != nil {
+		if _, err := io.ReadFull(r, b[:]); err != nil {
 			return "", err
 		}
 		bs = append(bs, b[0])
