@@ -32,19 +32,19 @@ Below is a simple example of usage
 socksConf := &socks.Config{}
 socksServer, err := socks.New(socksConf)
 if err != nil {
-  panic(err)
+    panic(err)
 }
 
 l, err := net.Listen("tcp", "127.0.0.1:1080")
 if err != nil {
-  panic(err)
+    panic(err)
 }
 for {
-  conn, err := l.Accept()
-  if err != nil {
-    panic(err)
-  }
-  fmt.Println("accepted")
-  go socksServer.ServeConn(conn)
+    conn, err := l.Accept()
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("accepted")
+    go socksServer.ServeConn(conn)
 }
 ```
