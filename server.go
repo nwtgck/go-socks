@@ -133,7 +133,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	case socks5Version:
 		return s.handleSocks5(conn)
 	default:
-		err := fmt.Errorf("Unsupported SOCKS version: %v", version)
+		err := fmt.Errorf("unsupported SOCKS version: %v", version)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 

@@ -20,7 +20,7 @@ func (s *Server) handleSocks5(conn net.Conn) error {
 	if err != nil {
 		if err == unrecognizedAddrType {
 			if err := sendReply(conn, addrTypeNotSupported, nil); err != nil {
-				return fmt.Errorf("Failed to send reply: %v", err)
+				return fmt.Errorf("failed to send reply: %v", err)
 			}
 		}
 		return fmt.Errorf("failed to read destination address: %v", err)
