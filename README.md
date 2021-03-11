@@ -1,7 +1,7 @@
 # go-socks
 [![CI](https://github.com/nwtgck/go-socks/actions/workflows/ci.yml/badge.svg)](https://github.com/nwtgck/go-socks/actions/workflows/ci.yml)
 
-SOCKS4 and SOCKS5 proxy server in Go
+SOCKS4, SOCKS4a and SOCKS5 proxy server in Go
 
 ## Thanks
 This project is a fork of [armon/go-socks5](https://github.com/armon/go-socks5). The SOCKS5 implementation was written in that project. Thanks!
