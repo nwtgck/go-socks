@@ -1,12 +1,12 @@
-go-socks5 [![Build Status](https://travis-ci.org/armon/go-socks5.png)](https://travis-ci.org/armon/go-socks5)
-=========
+# go-socks
 
-Provides the `socks5` package that implements a [SOCKS5 server](http://en.wikipedia.org/wiki/SOCKS).
-SOCKS (Secure Sockets) is used to route traffic between a client and server through
-an intermediate proxy layer. This can be used to bypass firewalls or NATs.
+SOCKS4 and SOCKS5 proxy server in Go
 
-Feature
-=======
+## Thanks
+This project is a fork of [armon/go-socks5](https://github.com/armon/go-socks5). The SOCKS5 implementation was written in that project. Thanks!
+
+
+## Feature
 
 The package has the following features:
 * "No Auth" mode
@@ -16,30 +16,34 @@ The package has the following features:
 * Custom DNS resolution
 * Unit tests
 
-TODO
-====
+## TODO
 
 The package still needs the following:
 * Support for the BIND command
 * Support for the ASSOCIATE command
 
 
-Example
-=======
+## Example
 
 Below is a simple example of usage
 
 ```go
-// Create a SOCKS5 server
-conf := &socks5.Config{}
-server, err := socks5.New(conf)
+socksConf := &socks.Config{}
+socksServer, err := socks.New(socksConf)
 if err != nil {
   panic(err)
 }
 
-// Create SOCKS5 proxy on localhost port 8000
-if err := server.ListenAndServe("tcp", "127.0.0.1:8000"); err != nil {
+l, err := net.Listen("tcp", "127.0.0.1:1080")
+if err != nil {
   panic(err)
 }
+for {
+  conn, err := l.Accept()
+  if err != nil {
+    panic(err)
+  }
+  fmt.Println("accepted")
+  go socksServer.ServeConn(conn)
+}
 ```
-
