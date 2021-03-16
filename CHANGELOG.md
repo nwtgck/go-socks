@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-## 0.1.0 - 2021-05-11
+## 0.1.0 - 2021-03-11
 ### Added
 * Support SOCKS5 powered by [armon/go-socks5](https://github.com/armon/go-socks5)
 * Support SOCKS4
